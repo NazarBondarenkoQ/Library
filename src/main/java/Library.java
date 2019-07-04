@@ -1,13 +1,66 @@
 package main.java;
 
+import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
-public class Library {
+class Library {
     private List<Book> books = new ArrayList<>(Arrays.asList(new Book("1984", "Orwell"),
             new Book("To kill a Mockingbird", "Lee"), new Book("The Alchemist", "Coelho"),
             new Book("Head First Java", "Sierra")));
+    private Map<LocalDate, Book> registration = new HashMap<>();
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    public void addBook() {
+    Library() {
+        start();
+    }
+
+    private void start() {
+        int choice = 0;
+        System.out.println("~~~~~~~~~~~~~Welcome to the interactive library~~~~~~~~~~~~~");
+        System.out.println("~~~~~~~~~~~~~~~~PLEASE SELECT AN ACTION~~~~~~~~~~~~~~~~");
+        System.out.println(" 1) - Add some book to the library;\n" +
+                " 2) - Show all books available in the library;\n" +
+                "3) - Take the book;\n" + "4) - Show dates, when the books were taken;\n" +
+                "5) - Show which books were taken;\n" + "6) - Find the book by the date;\n" +
+                "7) - Stop the program; \n");
+        do {
+            try {
+                choice = scanner.nextInt();
+            } catch (InputMismatchException | IllegalStateException exception) {
+                System.out.println("You have entered incorrect data, please try again.");
+                break;
+            }
+        } while ((choice <= 0) || (choice > 7));
+        switch (choice) {
+            case 1:
+                addBook();
+                break;
+            case 2:
+                printBooks();
+                break;
+            case 3:
+                takeBook();
+                break;
+            case 4:
+                showDate();
+                break;
+            case 5:
+                showTakenBooks();
+                break;
+            case 6:
+                findBook();
+                break;
+            case 7:
+                System.exit(1);
+                break;
+        }
+        start();
+    }
+
+    private void addBook() {
         System.out.println("\nPlease enter the authors name: ");
         String author = scanner.next();
         System.out.println("Please enter the books name: ");
@@ -17,7 +70,7 @@ public class Library {
         }
     }
 
-    public void printBooks() {
+    private void printBooks() {
         if (books.isEmpty()) {
             System.out.println("\nThere are no books left in the library");
         } else {
@@ -30,7 +83,7 @@ public class Library {
         }
     }
 
-    public void takeBook() {
+    private void takeBook() {
         System.out.println("Please select a book that you want to take: ");
         for (int i = 0; i < books.size(); i++) {
             if (books.get(i) != null) {
@@ -52,8 +105,49 @@ public class Library {
 
         } while (bookName <= 0 || bookName > books.size());
         System.out.println("You have taken the: " + "\"" + books.get((bookName - 1)).getName() + "\" written by: " + books.get((bookName - 1)).getAuthor());
+        registration.put(LocalDate.now(), books.get(bookName - 1));
         books.remove((bookName - 1));
+    }
 
+    private void showDate() {
+        if (registration.isEmpty()) {
+            System.out.println("No books were taken yet.");
+        } else {
+            for (Book i : registration.values()) {
+                System.out.println("\nList of the dates when books were taken: ");
+                System.out.println("Date: " + registration.keySet());
+            }
+        }
+    }
+
+    private void showTakenBooks() {
+        if (registration.isEmpty()) {
+            System.out.println("No books were taken yet.");
+        } else {
+            for (Book i : registration.values()) {
+                System.out.println("\nList of taken books: ");
+                System.out.println("Book: " + "\"" + i.getName() + "\"");
+            }
+        }
+    }
+
+    private void findBook() {
+        if (registration.isEmpty()) {
+            System.out.println("No books were taken yet.");
+        } else {
+            LocalDate format = null;
+            System.out.println("Please enter the date using such format: " + LocalDate.now());
+            try {
+                format = LocalDate.parse(scanner.next());
+            } catch (DateTimeParseException exception) {
+                System.out.println("You have entered invalid data. Please try again");
+            }
+            if (registration.containsKey(format)) {
+                System.out.println("Book: " + "\"" + registration.get(format).getName() + "\"" + " were taken: " + format);
+            } else {
+                System.out.println("No books were taken on that date");
+            }
+        }
     }
 
     private Scanner scanner = new Scanner(System.in);
