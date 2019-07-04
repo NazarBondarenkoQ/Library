@@ -14,12 +14,12 @@ class Library {
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     Library() {
+        System.out.println("~~~~~~~~~~~~~Welcome to the interactive library~~~~~~~~~~~~~");
         start();
     }
 
     private void start() {
         int choice = 0;
-        System.out.println("~~~~~~~~~~~~~Welcome to the interactive library~~~~~~~~~~~~~");
         System.out.println("~~~~~~~~~~~~~~~~PLEASE SELECT AN ACTION~~~~~~~~~~~~~~~~");
         System.out.println(" 1) - Add some book to the library;\n" +
                 " 2) - Show all books available in the library;\n" +
@@ -105,7 +105,10 @@ class Library {
 
         } while (bookName <= 0 || bookName > books.size());
         System.out.println("You have taken the: " + "\"" + books.get((bookName - 1)).getName() + "\" written by: " + books.get((bookName - 1)).getAuthor());
-        registration.put(LocalDate.now(), books.get(bookName - 1));
+        int minDay = (int) LocalDate.of(2000, 1, 1).toEpochDay();
+        int maxDay = (int) LocalDate.of(2019, 1, 1).toEpochDay();
+        long randomDay = minDay + random.nextInt(maxDay - minDay);
+        registration.put(LocalDate.ofEpochDay(randomDay), books.get(bookName - 1));
         books.remove((bookName - 1));
     }
 
@@ -113,19 +116,16 @@ class Library {
         if (registration.isEmpty()) {
             System.out.println("No books were taken yet.");
         } else {
-            for (Book i : registration.values()) {
-                System.out.println("\nList of the dates when books were taken: ");
                 System.out.println("Date: " + registration.keySet());
             }
         }
-    }
 
     private void showTakenBooks() {
         if (registration.isEmpty()) {
             System.out.println("No books were taken yet.");
         } else {
+            System.out.println("\nList of taken books: ");
             for (Book i : registration.values()) {
-                System.out.println("\nList of taken books: ");
                 System.out.println("Book: " + "\"" + i.getName() + "\"");
             }
         }
@@ -151,6 +151,7 @@ class Library {
     }
 
     private Scanner scanner = new Scanner(System.in);
+    private Random random = new Random();
 
 }
 
