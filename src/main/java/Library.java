@@ -1,7 +1,5 @@
 package main.java;
 
-import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -11,7 +9,8 @@ class Library {
             new Book("To kill a Mockingbird", "Lee"), new Book("The Alchemist", "Coelho"),
             new Book("Head First Java", "Sierra")));
     private Map<LocalDate, Book> registration = new HashMap<>();
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private Scanner scanner = new Scanner(System.in);
+    private Random random = new Random();
 
     Library() {
         System.out.println("~~~~~~~~~~~~~Welcome to the interactive library~~~~~~~~~~~~~");
@@ -21,22 +20,22 @@ class Library {
     private void start() {
         int choice = 0;
         System.out.println("~~~~~~~~~~~~~~~~PLEASE SELECT AN ACTION~~~~~~~~~~~~~~~~");
-        System.out.println(" 1) - Add some book to the library;\n" +
-                " 2) - Show all books available in the library;\n" +
+        System.out.println("1) - Add some book to the library;\n" +
+                "2) - Show all books available in the library;\n" +
                 "3) - Take the book;\n" + "4) - Show dates, when the books were taken;\n" +
                 "5) - Show which books were taken;\n" + "6) - Find the book by the date;\n" +
                 "7) - Stop the program; \n");
         do {
-            try {
+            if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                if (choice < 0 || choice > 7){
+                if (choice < 0 || choice > 7) {
                     System.out.println("Such option is not available. Please select any of available options.");
                 }
-            } catch (InputMismatchException | IllegalStateException exception) {
-                System.out.println("You have entered incorrect data, please try again.");
-                System.exit(-1);
             }
-
+            else {
+                System.out.println("You have entered incorrect data. Run the program again and use numbers only.");
+                System.exit(1);
+            }
         } while ((choice <= 0) || (choice > 7));
         switch (choice) {
             case 1:
@@ -88,8 +87,9 @@ class Library {
     }
 
     private void takeBook() {
+        int amount = books.size();
         System.out.println("Please select a book that you want to take: ");
-        for (int i = 0; i < books.size(); i++) {
+        for (int i = 0; i < amount; i++) {
             if (books.get(i) != null) {
                 System.out.println((i + 1) + ": " + "\"" + books.get(i).getName() + "\" ");
             }
@@ -103,11 +103,11 @@ class Library {
                 System.out.println("You have entered incorrect data, please try again.");
                 break;
             }
-            if (bookName <= 0 || bookName > books.size()) {
+            if (bookName <= 0 || bookName > amount) {
                 System.out.println("Such book is not in the list, please select the book from available ones: ");
             }
 
-        } while (bookName <= 0 || bookName > books.size());
+        } while (bookName <= 0 || bookName > amount);
         System.out.println("You have taken the: " + "\"" + books.get((bookName - 1)).getName() + "\" written by: " + books.get((bookName - 1)).getAuthor());
         int minDay = (int) LocalDate.of(2000, 1, 1).toEpochDay();
         int maxDay = (int) LocalDate.of(2019, 1, 1).toEpochDay();
@@ -120,9 +120,9 @@ class Library {
         if (registration.isEmpty()) {
             System.out.println("No books were taken yet.");
         } else {
-                System.out.println("Date: " + registration.keySet());
-            }
+            System.out.println("Date: " + registration.keySet());
         }
+    }
 
     private void showTakenBooks() {
         if (registration.isEmpty()) {
@@ -153,10 +153,6 @@ class Library {
             }
         }
     }
-
-    private Scanner scanner = new Scanner(System.in);
-    private Random random = new Random();
-
 }
 
 
