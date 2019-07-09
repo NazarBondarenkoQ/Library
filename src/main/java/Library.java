@@ -29,10 +29,14 @@ class Library {
         do {
             try {
                 choice = scanner.nextInt();
+                if (choice < 0 || choice > 7){
+                    System.out.println("Such option is not available. Please select any of available options.");
+                }
             } catch (InputMismatchException | IllegalStateException exception) {
                 System.out.println("You have entered incorrect data, please try again.");
-                break;
+                System.exit(-1);
             }
+
         } while ((choice <= 0) || (choice > 7));
         switch (choice) {
             case 1:
